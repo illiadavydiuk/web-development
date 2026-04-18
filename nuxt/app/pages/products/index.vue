@@ -7,13 +7,14 @@ useSeoMeta({
 })
 
 const { data: plans, status } = await useFetch<Plan[]>('/api/plans')
-
 const billingPeriod = ref<'annual' | 'monthly'>('annual')
+
+const subscriptionStore = useSubscriptionStore()
 </script>
 
 <template>
   <div class="bg-gray-100 min-h-screen p-8">
-    <div class="flex items-center justify-between mb-8 max-w-[1068px] mx-auto" >
+    <div class="flex items-center justify-between mb-8 max-w-[1068px] mx-auto">
       <h1 class="text-3xl font-bold text-gray-800">Start Your 3 Day Free Trial</h1>
 
       <div class="flex items-center gap-2">
@@ -34,6 +35,19 @@ const billingPeriod = ref<'annual' | 'monthly'>('annual')
             Monthly
           </button>
         </div>
+      </div>
+    </div>
+
+    <div v-if="subscriptionStore.isSelected" class="max-w-[1068px] mx-auto mb-4">
+      <div class="flex items-center justify-between px-4 py-3 bg-green-50 border border-green-200 rounded-lg text-sm text-green-700">
+        <span>
+          Обраний план: <strong>{{ subscriptionStore.selectedPlan?.name }}</strong>
+          ({{ subscriptionStore.billing === 'annual' ? 'Annual' : 'Monthly' }})
+          — ${{ subscriptionStore.displayTotal }}
+        </span>
+        <button class="text-red-400 hover:text-red-600 font-semibold" @click="subscriptionStore.clearPlan">
+          Скасувати вибір
+        </button>
       </div>
     </div>
 

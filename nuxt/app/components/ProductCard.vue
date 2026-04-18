@@ -6,24 +6,18 @@ const props = defineProps<{
   billingPeriod?: 'annual' | 'monthly'
   hideButton?: boolean
 }>()
+
+const subscriptionStore = useSubscriptionStore()
+
 const isAnnual = computed(() => props.billingPeriod !== 'monthly')
 
 const displayPrice = computed(() =>
   isAnnual.value ? props.plan.priceMonthly : props.plan.priceMonthlyFull
 )
 
-const displayTotal = computed(() =>
-  isAnnual.value ? props.plan.priceYearlyDiscounted : props.plan.priceMonthlyFull * 12
-)
-
-function redirectToCheckout(id: number) {
-  navigateTo({
-    path: '/products/checkout',
-    query: {
-      plan: id,
-      billing: props.billingPeriod ?? 'annual'
-    }
-  })
+function redirectToCheckout() {
+  subscriptionStore.selectPlan(props.plan, props.billingPeriod ?? 'annual')
+  navigateTo('/products/checkout')
 }
 </script>
 
@@ -66,7 +60,7 @@ function redirectToCheckout(id: number) {
             :class="plan.isFreeTrialAvailable
               ? 'bg-gradient-to-r from-amber-300 to-orange-400 hover:from-yellow-300 hover:to-amber-400 text-black cursor-pointer'
               : 'bg-gray-300 text-gray-500 cursor-not-allowed'"
-            @click="plan.isFreeTrialAvailable && redirectToCheckout(plan.id)"
+            @click="plan.isFreeTrialAvailable && redirectToCheckout()"
           >
             {{ plan.isFreeTrialAvailable ? 'Try It Free' : 'Trial Unavailable' }}
           </button>
