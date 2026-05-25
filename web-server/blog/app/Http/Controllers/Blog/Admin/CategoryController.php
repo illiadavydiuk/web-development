@@ -35,15 +35,17 @@ class CategoryController extends BaseController
             $data['slug'] = Str::slug($data['title']);
         }
 
-        $item = BlogCategory::create($data);
 
-        if ($item) {
+        try {
+            $item = BlogCategory::create($data);
             return [
                 'success' => 'Успішно збережено',
                 'data'    => $item
             ];
-        } else {
-            return ['msg' => 'Помилка збереження'];
+        } catch (\Exception $e) {
+            return response()->json([
+                'msg' => 'Помилка збереження: така категорія уже існує!'
+            ], 422);
         }
     }
 
@@ -75,15 +77,16 @@ class CategoryController extends BaseController
             $data['slug'] = Str::slug($data['title']); // Генеруємо псевдонім
         }
 
-        $result = $item->update($data); // Оновлюємо дані об'єкта і зберігаємо в БД
-
-        if ($result) {
+        try {
+            $item->update($data);
             return [
                 'success' => 'Успішно збережено',
                 'data'    => $item
             ];
-        } else {
-            return ['msg' => 'Помилка збереження'];
+        } catch (\Exception $e) {
+            return response()->json([
+                'msg' => 'Помилка оновлення: ця назва уже зайнята іншою категорією!'
+            ], 422);
         }
     }
 
