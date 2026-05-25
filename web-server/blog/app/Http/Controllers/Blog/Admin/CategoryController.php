@@ -27,7 +27,7 @@ class CategoryController extends BaseController
      */
     public function store(Request $request)
     {
-//        dd(__METHOD__);
+        // dd(__METHOD__);
 
         $data = $request->all();
 
@@ -37,9 +37,14 @@ class CategoryController extends BaseController
 
         $item = BlogCategory::create($data);
 
-        return $item
-            ? ['success' => 'Успішно збережено', 'id' => $item->id]
-            : ['msg' => 'Помилка збереження'];
+        if ($item) {
+            return [
+                'success' => 'Успішно збережено',
+                'data'    => $item
+            ];
+        } else {
+            return ['msg' => 'Помилка збереження'];
+        }
     }
 
     /**
@@ -55,24 +60,28 @@ class CategoryController extends BaseController
      */
     public function update(Request $request, string $id)
     {
-//        dd(__METHOD__);
+        // dd(__METHOD__);
 
         $item = BlogCategory::find($id);
-        if (empty($item)) { //якщо ід не знайдено
-            return back() //redirect back
-            ->withErrors(['msg' => "Запис id=[{$id}] не знайдено"]) //видати помилку
-            ->withInput(); //повернути дані
+
+        if (empty($item)) {
+            return response()->json([
+                'msg' => "Запис id=[{$id}] не знайдено"
+            ], 404);
         }
 
-        $data = $request->all(); //отримаємо масив даних, які надійшли з форми
-        if (empty($data['slug'])) { //якщо псевдонім порожній
-            $data['slug'] = Str::slug($data['title']); //генеруємо псевдонім
+        $data = $request->all(); // Отримаємо масив даних, які надійшли з форми
+        if (empty($data['slug'])) { // Якщо псевдонім порожній
+            $data['slug'] = Str::slug($data['title']); // Генеруємо псевдонім
         }
 
-        $result = $item->update($data);  //оновлюємо дані об'єкта і зберігаємо в БД
+        $result = $item->update($data); // Оновлюємо дані об'єкта і зберігаємо в БД
 
         if ($result) {
-            return ['success' => 'Успішно збережено'];
+            return [
+                'success' => 'Успішно збережено',
+                'data'    => $item
+            ];
         } else {
             return ['msg' => 'Помилка збереження'];
         }
