@@ -18,7 +18,7 @@ Route::prefix('blog')->group(function () {
 
 
 $groupData = [
-    'namespace' => 'App\Http\Controllers\Blog\Admin',
+    'namespace' => 'App\Http\Controllers\Api\Blog\Admin',
     'prefix' => 'admin/blog',
 ];
 Route::group($groupData, function () {
