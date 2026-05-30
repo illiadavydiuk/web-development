@@ -95,16 +95,30 @@ class CategoryController extends BaseController
             $data['slug'] = Str::slug($data['title']); // Генеруємо псевдонім
         }
 
-        try {
-            $item->update($data);
+        // try {
+        //     $item->update($data);
+        //     return [
+        //         'success' => 'Успішно збережено',
+        //         'data'    => $item
+        //     ];
+        // } catch (\Exception $e) {
+        //     return response()->json([
+        //         'msg' => 'Помилка оновлення: ця назва уже зайнята іншою категорією!'
+        //     ], 422);
+        // }
+        
+        $result = $item->update($data);
+
+        if ($result) {
             return [
-                'success' => 'Успішно збережено',
-                'data'    => $item
+                'success' => true,
+                'message' => 'Успішно створено',
+                'item' => $item];
+        } else {
+            return [
+                'success' => false,
+                'message' => 'Помилка створення'
             ];
-        } catch (\Exception $e) {
-            return response()->json([
-                'msg' => 'Помилка оновлення: ця назва уже зайнята іншою категорією!'
-            ], 422);
         }
     }
 
