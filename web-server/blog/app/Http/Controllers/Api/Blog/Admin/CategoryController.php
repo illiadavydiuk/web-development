@@ -106,18 +106,18 @@ class CategoryController extends BaseController
         //         'msg' => 'Помилка оновлення: ця назва уже зайнята іншою категорією!'
         //     ], 422);
         // }
-        
+
         $result = $item->update($data);
 
         if ($result) {
             return [
                 'success' => true,
-                'message' => 'Успішно створено',
+                'message' => 'Успішно оновлено',
                 'item' => $item];
         } else {
             return [
                 'success' => false,
-                'message' => 'Помилка створення'
+                'message' => 'Помилка оновлення'
             ];
         }
     }
