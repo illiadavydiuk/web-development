@@ -3,6 +3,9 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DiggingDeeperController;
+use App\Http\Controllers\Api\Blog\PostController;
+use App\Http\Controllers\Api\Blog\Admin\CategoryController;
+use App\Http\Controllers\Api\Blog\Admin\PostController as AdminPostController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -28,7 +31,7 @@ Route::group($groupData, function () {
         ->only($methods)
         ->names('blog.admin.categories');
     //BlogPost
-    Route::apiResource('posts', PostController::class)
+    Route::apiResource('posts', AdminPostController::class)
     ->except(['show'])                               //не робити маршрут для метода show
     ->names('blog.admin.posts');
 });
@@ -36,6 +39,12 @@ Route::group($groupData, function () {
 Route::group(['prefix' => 'digging_deeper'], function () {
     Route::get('collections', [DiggingDeeperController::class, 'collections'])
         ->name('digging_deeper.collections');
+        
+    Route::get('process-video', [DiggingDeeperController::class , 'processVideo'])
+        ->name('digging_deeper.processVideo');
+
+    Route::get('prepare-catalog', [DiggingDeeperController::class, 'prepareCatalog'])
+        ->name('digging_deeper.prepareCatalog');
 });
 
 
