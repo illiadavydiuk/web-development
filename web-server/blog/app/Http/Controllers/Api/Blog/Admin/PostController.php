@@ -13,6 +13,9 @@ use Illuminate\Support\Str;
 
 use App\Http\Controllers\Api\Blog\BaseController;
 
+use App\Jobs\BlogPostAfterCreateJob;
+use App\Jobs\BlogPostAfterDeleteJob;
+
 class PostController extends BaseController
 {
     public function __construct(
@@ -42,6 +45,9 @@ class PostController extends BaseController
         $item = (new BlogPost())->create($data); //створюємо об'єкт і додаємо в БД
 
         if ($item) {
+            // $job = new BlogPostAfterCreateJob($item);
+            // $this->dispatch($job);
+            BlogPostAfterCreateJob::dispatch($item);
             return ['success' => 'Успішно збережено'];
         } else {
             return ['msg' => 'Помилка збереження'];
@@ -95,11 +101,12 @@ class PostController extends BaseController
         //$result = BlogPost::find($id)->forceDelete(); //повне видалення з БД
 
         if ($result) {
+            BlogPostAfterDeleteJob::dispatch($id)->delay(now()->addSeconds(20));
             return [
                 'success' => true,
                 'message' => 'Успішно видалено',
                 'item' => $item
-            ];s
+            ];
         } else {
             return [
                 'success' => false,
