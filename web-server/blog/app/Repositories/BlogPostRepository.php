@@ -23,7 +23,7 @@ class BlogPostRepository extends CoreRepository
     public function getAllWithPaginate($params = [])
     {
         $columns = ['id', 'title', 'slug', 'is_published', 'published_at', 'user_id', 'category_id',];
-        
+
         $perPage = data_get($params, 'per_page', 10);
         $search = data_get($params, 'search');
 
@@ -51,6 +51,11 @@ class BlogPostRepository extends CoreRepository
      */
     public function getEdit($id)
     {
-        return $this->startConditions()->find($id);
+        $post = $this->startConditions()->find($id);
+        if (!$post) {
+            return null;
+        }
+
+        return $post->load(['category:id,title', 'user:id,name']);
     }
 }

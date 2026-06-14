@@ -26,7 +26,7 @@ const synchronizeBlogPosts = async () => {
   }
 
   try {
-    const backendResponse = await $fetch<any>('http://localhost/api/blog/posts', { 
+    const backendResponse = await $fetch<any>('/api/posts', { 
       query: queryParameters 
     })
     
@@ -57,7 +57,7 @@ const gridColumns: ColumnConfig[] = [
     header: 'Заголовок статті',
     cell: ({ row }: any) => {
       return h('a', {
-        href: `http://localhost/admin/blog/posts/${row.getValue('id')}/edit`,
+        href: `/blog/posts/${row.getValue('id')}`,
         class: 'text-indigo-600 font-medium hover:underline'
       }, row.getValue('title'))
     }

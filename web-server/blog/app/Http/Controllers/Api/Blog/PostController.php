@@ -37,7 +37,16 @@ class PostController extends BaseController
      */
     public function show(string $id)
     {
-        //
+        $post = $this->blogPostRepository->getEdit($id);
+
+        if (is_null($post)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Статтю з таким ID не знайдено в базі даних.'
+            ], 404);
+        }
+
+        return response()->json(['data' => $post]);
     }
 
     /**

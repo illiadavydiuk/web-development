@@ -17,9 +17,8 @@ Route::get('/user', function (Request $request) {
 
 Route::group([ 'namespace' => 'App\Http\Controllers\Api\Blog', 'prefix' => 'blog'], function () {
     Route::apiResource('posts', PostController::class)->names('blog.posts');
+    Route::get('posts/{id}', [PostController::class, 'show'])->name('blog.posts.show');
 });
-
-
 $groupData = [
     'namespace' => 'App\Http\Controllers\Api\Blog\Admin',
     'prefix' => 'admin/blog',
