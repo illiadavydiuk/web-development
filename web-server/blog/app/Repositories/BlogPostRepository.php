@@ -22,7 +22,8 @@ class BlogPostRepository extends CoreRepository
      */
     public function getAllWithPaginate($params = [])
     {
-        $columns = ['id', 'title', 'slug', 'is_published', 'published_at', 'user_id', 'category_id',];
+        $columns = ['id', 'title', 'slug', 'is_published', 'published_at', 'user_id', 'category_id','created_at',
+            'updated_at'];
 
         $perPage = data_get($params, 'per_page', 10);
         $search = data_get($params, 'search');

@@ -10,7 +10,7 @@ export interface Post {
     content_raw: string,
     content_html: string,
     is_published: boolean,
-    published_at: Date,
+    date_published: Date,
     created_at: Date,
     updated_at: Date,
     deleted_at: Date

@@ -72,7 +72,7 @@ onMounted(() => {
                 {{ post.is_published ? 'Опубліковано' : 'Чернетка' }}
             </span>
             <span class="mx-1">•</span>
-            <span>Дата: {{ post.published_at ? new Date(post.published_at).toLocaleDateString() : '—' }}</span>
+            <span>Дата: {{ post.date_published ? new Date(post.date_published).toLocaleDateString() : '—' }}</span>
             <template v-if="post.updated_at && new Date(post.updated_at).toLocaleDateString() !== new Date(post.created_at).toLocaleDateString()">
                 <span class="mx-1">•</span>
                 <span class="text-amber-600 font-medium">

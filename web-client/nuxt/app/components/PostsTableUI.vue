@@ -31,7 +31,7 @@ const synchronizeBlogPosts = async () => {
     })
     
     itemsCollection.value = backendResponse?.data || []
-    totalItemsInDatabase.value = backendResponse?.total || 0
+    totalItemsInDatabase.value = backendResponse?.meta?.total || 0
   } catch (error) {
     console.error('Помилка синхронізації:', error)
   } finally {
@@ -63,10 +63,10 @@ const gridColumns: ColumnConfig[] = [
     }
   },
   {
-    accessorKey: 'published_at',
+    accessorKey: 'date_published',
     header: 'Дата публікації',
     cell: ({ row }: any) => {
-      const dateValue = row.getValue('published_at')
+      const dateValue = row.getValue('date_published')
       return dateValue ? new Date(dateValue).toLocaleDateString() : '—'
     }
   }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\Blog;
 use App\Models\BlogPost;
 use Illuminate\Http\Request;
 use App\Repositories\BlogPostRepository;
+use App\Http\Resources\Api\Blog\Admin\PostResource;
 
 class PostController extends BaseController
 {
@@ -18,10 +19,10 @@ class PostController extends BaseController
     {
         $params = $request->only(['page', 'per_page', 'search']);
         
-        // Отримуємо відфільтрований пагінатор
         $paginator = $this->blogPostRepository->getAllWithPaginate($params);
 
-        return $paginator;
+        // return $paginator;
+        return PostResource::collection($paginator);
     }
 
     /**
@@ -46,7 +47,8 @@ class PostController extends BaseController
             ], 404);
         }
 
-        return response()->json(['data' => $post]);
+        // return response()->json(['data' => $post]);
+        return new PostResource($post);
     }
 
     /**
