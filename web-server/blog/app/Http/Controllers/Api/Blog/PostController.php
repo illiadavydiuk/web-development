@@ -4,17 +4,24 @@ namespace App\Http\Controllers\Api\Blog;
 
 use App\Models\BlogPost;
 use Illuminate\Http\Request;
+use App\Repositories\BlogPostRepository;
 
 class PostController extends BaseController
 {
+    public function __construct(private BlogPostRepository $blogPostRepository)
+    {
+    }
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $items = BlogPost::all();
+        $params = $request->only(['page', 'per_page', 'search']);
+        
+        // Отримуємо відфільтрований пагінатор
+        $paginator = $this->blogPostRepository->getAllWithPaginate($params);
 
-        return $items;
+        return $paginator;
     }
 
     /**
