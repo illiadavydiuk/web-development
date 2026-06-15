@@ -48,7 +48,8 @@ class CategoryController extends BaseController
         if ($item) {
             return [
                 'success' => true,
-                'message' => 'Успішно збережено'
+                'message' => 'Успішно збережено',
+                'item' => $item
                 ];
         } else {
             return ['message' => 'Помилка збереження'];
