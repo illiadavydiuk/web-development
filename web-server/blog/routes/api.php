@@ -25,7 +25,7 @@ $groupData = [
 ];
 Route::group($groupData, function () {
     //BlogCategory
-    $methods = ['index','store','update',];
+    $methods = ['index', 'show', 'store','update', 'destroy'];
     Route::apiResource('categories', CategoryController::class)
         ->only($methods)
         ->names('blog.admin.categories');

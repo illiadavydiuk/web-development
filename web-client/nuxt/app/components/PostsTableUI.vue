@@ -64,7 +64,8 @@ const gridColumns: ColumnConfig[] = [
       const dateValue = row.getValue('date_published')
       return dateValue ? new Date(dateValue).toLocaleDateString() : '—'
     }
-  }
+  },
+  { accessorKey: 'actions', header: 'Дії' } 
 ]
 
 const customLimitOptions: DropdownAction[][] = [[
@@ -73,6 +74,33 @@ const customLimitOptions: DropdownAction[][] = [[
   { label: '25 записів', onSelect: () => { itemsPerPage.value = 25; activePage.value = 1 } },
   { label: '50 записів', onSelect: () => { itemsPerPage.value = 50; activePage.value = 1 } }
 ]]
+
+const getActionItems = (row: Post) => [
+  {
+    label: 'Редагувати',
+    icon: 'i-lucide-edit',
+    to: `/blog/posts/${row.id}/edit`
+  },
+  {
+    label: 'Видалити',
+    icon: 'i-lucide-trash',
+    class: 'text-red-600 hover:text-red-700 font-medium',
+    onSelect: () => executeDeletePost(row.id, row.title)
+  }
+]
+
+const executeDeletePost = async (id: number, title: string) => {
+  if (!confirm(`Ви впевнені, що хочете видалити статтю "${title}"?`)) return
+
+  try {
+    await $fetch(`/api/posts/${id}`, { method: 'DELETE' })
+    synchronizeBlogPosts()
+  } catch (err: any) {
+    console.error('Помилка при видаленні статті:', err)
+    const serverMessage = err.response?._data?.message || 'Не вдалося видалити статтю.'
+    alert(`Помилка: ${serverMessage}`)
+  }
+}
 
 watch(textSearchFilterDebounced, () => {
   activePage.value = 1
@@ -125,12 +153,12 @@ onMounted(() => {
         </div>
       </div>
 
-      <a 
-        href="http://localhost/admin/blog/posts/create" 
+      <NuxtLink 
+        to="/blog/posts/create" 
         class="w-full lg:w-auto text-center px-4 py-2 text-sm font-medium bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition shadow-sm"
       >
         Створити публікацію
-      </a>
+      </NuxtLink>
     </div>
 
     <div class="border border-gray-200 rounded-xl shadow-sm overflow-hidden bg-white">
@@ -144,7 +172,18 @@ onMounted(() => {
           thead: 'bg-slate-50 text-slate-600 font-semibold border-b border-slate-200',
           tr: 'hover:bg-slate-50/50 transition-colors'
         }"
-      />
+      >
+        <template #actions-cell="{ row }">
+          <UDropdownMenu :items="getActionItems(row.original)">
+            <UButton 
+              color="neutral" 
+              variant="ghost" 
+              icon="i-lucide-ellipsis-vertical" 
+              aria-label="Оберіть дію"
+            />
+          </UDropdownMenu>
+        </template>
+      </UTable>
     </div>
 
     <div class="flex justify-between items-center bg-gray-50 p-4 border border-gray-200 rounded-xl text-xs text-gray-500 font-medium">

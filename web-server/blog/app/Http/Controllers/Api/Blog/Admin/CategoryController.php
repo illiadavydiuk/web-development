@@ -11,6 +11,7 @@ use App\Http\Requests\BlogCategoryUpdateRequest;
 use App\Http\Requests\BlogCategoryCreateRequest;
 use App\Http\Controllers\Api\Blog\BaseController;
 use App\Http\Resources\Api\Blog\Admin\CategoryResource;
+use Illuminate\Http\Request;
 
 class CategoryController extends BaseController
 {
@@ -24,13 +25,13 @@ class CategoryController extends BaseController
      */
 
     
-    public function index()
+    public function index(Request $request)
     {
 //        dd(__METHOD__);
-        // $paginator = BlogCategory::paginate(5);
-        $paginator = $this->blogCategoryRepository->getAllWithPaginate(5);
+        $params = $request->all();
 
-        // return $paginator;
+        $paginator = $this->blogCategoryRepository->getAllWithPaginate($params);
+
         return CategoryResource::collection($paginator);
     }
 
@@ -39,28 +40,6 @@ class CategoryController extends BaseController
      */
     public function store(BlogCategoryCreateRequest $request)
     {
-        // dd(__METHOD__);
-
-        // $data = $request->all();
-
-        // if (empty($data['slug'])) {
-        //     $data['slug'] = Str::slug($data['title']);
-        // }
-
-
-        // try {
-        //     $item = BlogCategory::create($data);
-        //     return [
-        //         'success' => 'Успішно збережено',
-        //         'data'    => $item
-        //     ];
-        // } catch (\Exception $e) {
-        //     return response()->json([
-        //         'msg' => 'Помилка збереження: така категорія уже існує!'
-        //     ], 422);
-        // }
-
-
         $data = $request->input(); //отримаємо масив даних, які надійшли з форми
         
         
@@ -81,7 +60,15 @@ class CategoryController extends BaseController
      */
     public function show(string $id)
     {
-        dd(__METHOD__);
+        $item = $this->blogCategoryRepository->getEdit($id);
+
+        if (empty($item)) {
+            return response()->json([
+                'success' => false,
+                'message' => "Запис id=[{$id}] не знайдено"
+            ], 404);
+        }
+        return new CategoryResource($item);
     }
 
     /**
@@ -102,18 +89,6 @@ class CategoryController extends BaseController
 
         $data = $request->all(); // Отримаємо масив даних, які надійшли з форми
 
-        // try {
-        //     $item->update($data);
-        //     return [
-        //         'success' => 'Успішно збережено',
-        //         'data'    => $item
-        //     ];
-        // } catch (\Exception $e) {
-        //     return response()->json([
-        //         'msg' => 'Помилка оновлення: ця назва уже зайнята іншою категорією!'
-        //     ], 422);
-        // }
-
         $result = $item->update($data);
 
         if ($result) {
@@ -132,8 +107,22 @@ class CategoryController extends BaseController
     /**
      * Remove the specified resource from storage.
      */
+    
     public function destroy(string $id)
     {
-        dd(__METHOD__);
+        $item = BlogCategory::find($id);
+
+        if (!$item) {
+            return response()->json(['message' => "Запис id=[{$id}] не знайдено"], 404);
+        }
+
+        $item->delete();
+
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Успішно видалено',
+            'data'    => $item 
+        ]);
     }
 }
