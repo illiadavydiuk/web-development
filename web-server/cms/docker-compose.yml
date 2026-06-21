@@ -1,0 +1,56 @@
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile_83
+    container_name: evo_app
+    ports:
+      - "8000:80"
+    volumes:
+      - ./www:/var/www/html
+      - ./docker/php.ini:/usr/local/etc/php/conf.d/custom.ini
+    depends_on:
+      - db
+    networks:
+      - evo_net
+
+  db:
+    image: mysql:8.0.37
+    container_name: evo_db
+    command: --default-authentication-plugin=mysql_native_password
+    ports:
+      - '${FORWARD_DB_PORT:-3306}:3306'
+    environment:
+      MYSQL_DATABASE: app
+      MYSQL_USER: app
+      MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: root_password
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./dump:/docker-entrypoint-initdb.d
+    networks:
+      - evo_net
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: evo_phpmyadmin
+    depends_on:
+      - db
+    environment:
+      PMA_HOST: db
+      PMA_USER: root
+      PMA_PASSWORD: root_password
+      PHP_INI_UPLOAD_MAX_FILESIZE: 500M
+      PHP_INI_POST_MAX_SIZE: 500M
+      UPLOAD_MAX_FILESIZE: 500M
+      UPLOAD_LIMIT: 500M
+    ports:
+      - "8080:80"
+    networks:
+      - evo_net
+volumes:
+  db_data:
+
+networks:
+  evo_net:

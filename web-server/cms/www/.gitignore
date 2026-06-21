@@ -1,0 +1,62 @@
+# assets
+/assets/backup/*
+!/assets/backup/index.html
+
+/assets/cache/*
+!/assets/cache/index.html
+!/assets/cache/siteManager.php
+!/assets/cache/sitePublishing.idx.php
+!/assets/cache/images/index.html
+!/assets/cache/rss/index.html
+!/assets/cache/updater/index.html
+
+/assets/docs/*
+!/assets/docs/changelog.txt
+!/assets/docs/index.html
+!/assets/docs/license.txt
+
+/assets/export/*
+!/assets/export/index.html
+
+/assets/files/*
+!/assets/files/index.html
+
+/assets/images/*
+!/assets/images/index.html
+!/assets/images/evo-logo.png
+
+/assets/import/*
+!/assets/import/index.html
+
+# Manager
+/manager/includes/config.inc.php
+/manager/media/style/default/css/styles.min.css
+
+# Composer
+/composer.phar
+
+/vendor
+!/vendor/index.html
+
+# IDE Helper
+evo_evolution.IDEhelper.php
+_ide_helper.php
+
+#node.JS
+/node_modules
+npm-debug.log
+
+#docker
+/docker/nginx/logs/*
+
+# System
+ftpsync.settings
+Thumbs.db
+Desktop.ini
+
+# SQLite database
+/core/database/*.sqlite
+
+# all dotfiles and dotfolders except do not ignore .gitignore
+**/.*
+!.gitignore

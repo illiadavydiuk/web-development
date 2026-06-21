@@ -1,0 +1,48 @@
+# ---------- PHP ----------
+FROM php:8.3-apache
+
+ARG USER_ID=1000
+ARG GROUP_ID=1000
+
+# Системні залежності
+RUN apt-get update && apt-get install -y \
+    pkg-config \
+    libxml2-dev \
+    libpng-dev \
+    libjpeg62-turbo-dev \
+    libfreetype6-dev \
+    libzip-dev \
+    libonig-dev \
+    zip \
+    unzip \
+    git \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# ServerName
+RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
+
+# PHP extensions
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install -j$(nproc) \
+    gd \
+    mysqli \
+    pdo_mysql \
+    zip \
+    mbstring \
+    exif \
+    xml
+
+# Apache
+RUN a2enmod rewrite
+
+# ---------- Composer ----------
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
+RUN usermod -u ${USER_ID} www-data && groupmod -g ${GROUP_ID} www-data
+
+# Робоча директорія
+WORKDIR /var/www/html
+
+# Права (зверни увагу: volume все одно перекриє їх)
+RUN chown -R www-data:www-data /var/www/html
